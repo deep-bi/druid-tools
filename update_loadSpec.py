@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List, Optional, Union
 
-SUPPORTED_STORAGE_TYPES = ["hdfs", "s3", "google", "azure"]
+SUPPORTED_STORAGE_TYPES = ["hdfs", "s3", "google", "azure", "local"]
 
 
 # Parse command line arguments
@@ -42,7 +42,7 @@ class RowProcessor:
         elif "path" in current_spec:
             path = current_spec["path"]
         else:
-            raise ValueError(f"Uknown segment path in loadSpec {json.dumps(current_spec)}")
+            raise ValueError(f"Unknown segment path in loadSpec {json.dumps(current_spec)}")
         if self.storage_type == "hdfs":
             return {
                 "type": "hdfs",
@@ -53,6 +53,11 @@ class RowProcessor:
                 "type": "s3_zip",
                 "bucket": self.bucket,
                 "key": path
+            }
+        elif self.storage_type == "local":
+            return {
+                "type": "local",
+                "path": path
             }
         elif self.storage_type == "google":
             return {
